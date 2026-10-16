@@ -1,0 +1,9 @@
+# Godot-generated caches; retain source .uid and .import sidecar files.
+.godot/
+*.translation
+
+# Local/exported artifacts.
+.DS_Store
+builds/
+*.log
+export_credentials.cfg

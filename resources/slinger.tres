@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/unit_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Slinger"
+hp = 5
+attack = 2
+move = 1
+attack_range = 2
+minimum_attack_range = 2
+perception = 8

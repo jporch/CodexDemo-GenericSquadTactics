@@ -1,0 +1,12 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/unit_stats.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Knight"
+hp = 10
+attack = 3
+defense = 1
+move = 3
+attack_range = 1
