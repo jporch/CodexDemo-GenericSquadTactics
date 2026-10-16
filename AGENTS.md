@@ -32,6 +32,7 @@
 - Add tests when they meaningfully verify gameplay logic. Report checks actually performed and remaining manual checks.
 
 - Web build: `sh scripts/godot.sh export`; local preview: `sh scripts/godot.sh serve` at http://127.0.0.1:8060. Matching 4.7.2 single-threaded Web templates are installed locally. Keep builds/ generated and ignored, including a .gdignore to prevent reimporting exported assets.
+- `.github/workflows/deploy-pages.yml` checks and exports on pushes/PRs to main and deploys successful main builds to GitHub Pages. Keep its pinned Godot version aligned with the project. Do not commit generated Web builds.
 - Unit stats are Inspector-editable resources in resources/. Visual placeholders live in files with a _placeholder suffix.
 
 ## Project records and completion

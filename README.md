@@ -6,6 +6,10 @@ The initial proof of concept is complete: this is a demonstration of the core me
 
 ## Play in your browser
 
+Public demo: **[Play Generic Squad Tactics](https://jporch.github.io/CodexDemo-GenericSquadTactics/)**.
+
+### Local preview
+
 The HTML5 build lives in `builds/web/` (generated, not tracked in Git). After cloning, install Godot and its matching Web export templates, then run from the project directory:
 
 ```sh
@@ -117,6 +121,14 @@ Verified locally: the rules and scene assertions pass, resource import and headl
 To render a three-panel visual sample of the slash, spark in flight, and impact burst, run `sh scripts/godot.sh preview-effects`. The image is saved to `.godot/attack-effects-preview.png`.
 
 For manual playtesting, verify highlights and readability, move and attack in both orders, cancel untouched activations, finish committed ones, end turns, and confirm/cancel restart. Headless checks do not verify visuals, input feel, or browser compatibility.
+
+## Automatic builds and hosting
+
+[Build and deploy demo](https://github.com/jporch/CodexDemo-GenericSquadTactics/actions/workflows/deploy-pages.yml) runs on pushes to `main`, pull requests targeting `main`, and manual dispatch. GitHub-hosted Linux runners install Godot 4.7.2 and matching Web templates from the official release, verify their SHA-512 checksums, run the project checks, and export the game.
+
+Successful builds on `main` deploy to GitHub Pages. Pull requests build and test without deploying. A failed check or export stops deployment and leaves the previous live build in place. Generated files remain outside the source branch; deployment artifacts expire after one day. You only need to commit and push source changes—no manual build upload is required.
+
+To rerun a deployment without changing source, open the workflow in GitHub Actions and choose **Run workflow** on `main`. For engine upgrades, update `GODOT_VERSION` in `.github/workflows/deploy-pages.yml` together with the project settings and documentation.
 
 ## Battle results
 

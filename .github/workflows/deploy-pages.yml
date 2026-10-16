@@ -1,0 +1,78 @@
+name: Build and deploy demo
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  GODOT_VERSION: 4.7.2
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install matching Godot engine and Web export templates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          download_dir="$RUNNER_TEMP/godot"
+          mkdir -p "$download_dir"
+          engine="Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          templates="Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          gh release download "${GODOT_VERSION}-stable" \
+            --repo godotengine/godot-builds \
+            --pattern "$engine" --pattern "$templates" --pattern SHA512-SUMS.txt \
+            --dir "$download_dir"
+          cd "$download_dir"
+          sha512sum --check --ignore-missing SHA512-SUMS.txt
+          unzip -q "$engine"
+          chmod +x "Godot_v${GODOT_VERSION}-stable_linux.x86_64"
+          echo "GODOT_BIN=$download_dir/Godot_v${GODOT_VERSION}-stable_linux.x86_64" >> "$GITHUB_ENV"
+          template_dir="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$template_dir"
+          unzip -q -j "$templates" 'templates/web_*' -d "$template_dir"
+
+      - name: Check resources, gameplay, scene integration, and startup
+        run: sh scripts/godot.sh check
+
+      - name: Export browser build
+        run: sh scripts/godot.sh export
+
+      - name: Upload Pages build
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: builds/web
+          retention-days: 1
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy demo
+        id: deployment
+        uses: actions/deploy-pages@v4
